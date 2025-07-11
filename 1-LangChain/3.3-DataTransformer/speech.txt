@@ -1,0 +1,15 @@
+LangChain is a powerful framework designed to simplify the development of applications powered by large language models (LLMs). It helps developers create chains of components, such as prompt templates, memory, LLMs, and agents, to build context-aware, intelligent applications.
+
+One of the core advantages of LangChain is its modularity. Developers can start with basic chains and progressively add more complex functionality such as custom tools, retrieval augmentation using vector stores, or multi-agent collaboration systems.
+
+LangChain supports multiple LLM providers such as OpenAI, Anthropic, Cohere, and Hugging Face. It also integrates with various vector stores like FAISS, Pinecone, Weaviate, and Chroma to enable efficient document retrieval and semantic search capabilities.
+
+For data ingestion, LangChain provides several document loaders. These include loaders for plain text, PDFs, CSVs, Notion, GitHub repositories, and even web pages via BeautifulSoup. This makes LangChain an ideal choice for applications such as chatbots, question-answering systems, summarization engines, and autonomous agents.
+
+To process and manage long documents, LangChain includes powerful text splitters like `CharacterTextSplitter`, `RecursiveCharacterTextSplitter`, and `MarkdownHeaderTextSplitter`. These tools break documents into manageable chunks while preserving context.
+
+LangChain also provides support for memory modules that enable chat history retention across multiple interactions, allowing LLMs to respond more intelligently. Memory types include ConversationBufferMemory, SummaryMemory, and VectorStoreRetrieverMemory.
+
+To build interactive and autonomous systems, LangChain supports the creation of agents—entities that decide which tools to call and when, based on natural language instructions. These agents can use tools like search engines, calculators, or even custom APIs to answer questions and perform tasks.
+
+Overall, LangChain offers a flexible, extensible, and production-ready framework for building LLM-based applications that can ingest data, reason over it, and provide human-like responses in real time.
