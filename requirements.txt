@@ -53,4 +53,8 @@ duckduckgo-search
 mysql-connector-python
 
 validators==0.28.1
-youtube_transcript_api
+youtube-transcript-api
+pytube
+unstructured
+numexpr
+huggingface_hub
