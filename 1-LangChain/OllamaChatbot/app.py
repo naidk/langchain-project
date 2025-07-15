@@ -1,48 +1,58 @@
 import streamlit as st
+import os
+from dotenv import load_dotenv
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Ollama
 
-
-import os
-from dotenv import load_dotenv
+# Load local .env (only for local development)
 load_dotenv()
 
-
-## langsmith tracking
-os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+# ✅ Use Streamlit secrets for LangSmith tracking
+os.environ["LANGCHAIN_API_KEY"] = st.secrets["LANGCHAIN_API_KEY"]
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] ="Q&A Chatbot with OLLAMA"
+os.environ["LANGCHAIN_PROJECT"] = "Q&A Chatbot with OLLAMA"
 
-## Prompt Template
+# ------------------ Prompt Template ------------------
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user queries."),
     ("user", "Question: {question}")
 ])
 
-# Function to generate response
-def generate_response(question, model_name):
-    llm = Ollama(model=model_name)
-    output_parser = StrOutputParser()
-    chain = prompt | llm | output_parser
-    answer = chain.invoke({'question': question})
-    return answer
+# ------------------ Generate Response Function ------------------
+def generate_response(question, model_name, temperature, max_tokens):
+    try:
+        llm = Ollama(
+            model=model_name,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+        output_parser = StrOutputParser()
+        chain = prompt | llm | output_parser
+        return chain.invoke({'question': question})
+    except Exception as e:
+        return f"⚠️ Error while generating response: {str(e)}"
 
-# Streamlit UI
+# ------------------ Streamlit UI Setup ------------------
+st.set_page_config(page_title="Ollama Q&A Chatbot", page_icon="🤖")
 st.title("🤖 Q&A Chatbot with Ollama")
+st.markdown("Ask any question and get an answer using a local Ollama-powered LLM.")
 
 # Sidebar Settings
-st.sidebar.title("Settings")
-model_name = st.sidebar.selectbox("Select an Ollama Model", ["gemma:2b"])
-temperature = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.7)
-max_tokens = st.sidebar.slider("Max Tokens", min_value=50, max_value=300, value=150)
+st.sidebar.title("⚙️ Settings")
+model_name = st.sidebar.selectbox("Select an Ollama Model", ["gemma:2b", "llama2", "mistral", "codellama"])
+temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.7)
+max_tokens = st.sidebar.slider("Max Tokens", 50, 300, 150)
 
-# Main App Interface
-st.write("Go ahead and ask any question!")
+# Chat Input
+st.write("💬 Go ahead and ask your question below:")
 user_input = st.text_input("You:")
 
 if user_input:
-    response = generate_response(user_input, model_name)
-    st.write(f"**Assistant:** {response}")
+    with st.spinner("🔄 Generating answer..."):
+        response = generate_response(user_input, model_name, temperature, max_tokens)
+        st.success("✅ Response:")
+        st.write(f"**Assistant:** {response}")
 else:
-    st.info("💬 Waiting for your question...")
+    st.info("💡 Waiting for your question...")
